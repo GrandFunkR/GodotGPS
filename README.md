@@ -3,7 +3,8 @@ GodotGPS
 
 This is the Google Play Service module for Godot Engine (https://github.com/okamstudio/godot)
 - Android only
-- Leaderboard only
+- Leaderboard
+- Achievements
 
 How to use
 ----------
@@ -68,6 +69,15 @@ The following methods are available:
   
   void lbShow(String id)
     id = Leaderboard ID
+
+  void acUnlock(String id)
+    id = Achievement Id to Unlock
+    
+  void acIncrement(String id, int val)
+    id = Achievement Id to Unlock
+    val = value of increment
+  
+  void acDisplay()
 ```
 License
 -------------
