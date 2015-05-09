@@ -22,12 +22,15 @@ public class GodotGPS extends Godot.SingletonBase
 {
 	private static final int	REQUEST_RESOLVE_ERROR	= 1001;
 	private static final int	REQUEST_LEADERBOARD		= 1002;
+	private static final int	REQUEST_ACHIEVEMENTS	= 1003;
 
 	private Activity		activity			= null;
 	private GoogleApiClient	client			= null;
 	private boolean		isResolvingError	= false;
 	private String			lbId				= null;
 	private int			lbScore			= 0;
+	private String			acId				= null;
+	private int			acVal				= 0;
 	
 	public void init()
 	{
@@ -249,6 +252,55 @@ public class GodotGPS extends Godot.SingletonBase
 		});
 	}
 
+	public void acUnlock(String id)
+	{
+		Log.d("godot", "GooglePlayService: acUnlock");
+		acId		= id;
+		
+		activity.runOnUiThread(new Runnable()
+		{
+			@Override public void run()
+			{
+				if (client.isConnected())
+				{
+					Games.Achievements.unlock(client, acId);
+				}
+			}
+		});
+	}
+	public void acIncrement(String id, int val)
+	{
+		Log.d("godot", "GooglePlayService: acUnlock");
+		
+		acId		= id;
+		acVal		= val;
+		
+		activity.runOnUiThread(new Runnable()
+		{
+			@Override public void run()
+			{
+				if (client.isConnected())
+				{
+					Games.Achievements.increment(client, acId, acVal);
+				}
+			}
+		});
+	}
+	public void acDisplay()
+	{
+		Log.d("godot", "GooglePlayService: lbShow");
+		activity.runOnUiThread(new Runnable()
+		{
+			@Override public void run()
+			{
+				if (client.isConnected())
+				{
+					activity.startActivityForResult(Games.Achievements.getAchievementsIntent(
+						client), REQUEST_ACHIEVEMENTS);
+				}
+			}
+		});
+	}
 	static public Godot.SingletonBase initialize(Activity p_activity)
 	{
 		return new GodotGPS(p_activity);
@@ -258,7 +310,7 @@ public class GodotGPS extends Godot.SingletonBase
 	{
 		registerClass("GooglePlayService", new String[]
 		{
-			"init", "signin", "signout", "getStatus", /*"revoke", *//*"printInfo", */"lbSubmit", "lbShow"
+			"init", "signin", "signout", "getStatus", /*"revoke", *//*"printInfo", */"lbSubmit", "lbShow", "acUnlock", "acIncrement", "acDisplay"
 		});
 		activity	= p_activity;
 	}
