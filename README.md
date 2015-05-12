@@ -78,6 +78,48 @@ The following methods are available:
     val = value of increment
   
   void acDisplay()
+  
+  void setInstanceID(int instanceId)
+  
+  void seeInvitations()
+  
+  void getProfileInfo()
+  
+  startQuickGame()
+  
+  void selectOpponents(int min, int max)
+```
+
+Callback Functions
+-------------
+```
+_on_connected()
+    fired on google play services connected
+
+_on_selected_player_ui_cancelled()
+
+_on_getCurrentPerson(status, name, photo, profile, email)
+
+_on_invitation_cancelled()
+
+_on_invitation_succeeded()
+
+_on_game_start()
+
+_on_invitation_recieved(invitedFrom)
+
+_on_invitation_emoved()
+
+_on_connected_to_room(RoomId, Participants, MyId)
+
+_on_left_room(statusCode, roomId)
+
+_on_disconnected_from_room(room)
+
+_on_updatePeerScoresDisplay()
+
+_on_leave_room(roomId)
+
 ```
 License
 -------------
