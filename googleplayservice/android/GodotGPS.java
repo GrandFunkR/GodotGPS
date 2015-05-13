@@ -3,6 +3,9 @@ package com.android.godot;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.nio.charset.Charset;
+import java.io.UnsupportedEncodingException;
+
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -210,6 +213,7 @@ public class GodotGPS extends Godot.SingletonBase implements	  RoomUpdateListene
 		Log.d(TAG, "GooglePlayService: showGameError");
         GodotLib.calldeferred(instanceId, "_on_show_game_error", new Object[]{});
     }
+	
 	
 	//public methods
 	public void init()
@@ -470,6 +474,16 @@ public class GodotGPS extends Godot.SingletonBase implements	  RoomUpdateListene
 		});
 	}
 	
+	public void broadcastUnreliableMessage(String messaggio){
+		Log.d(TAG, "GooglePlayService: broadcastUnreliableMessage data:" + messaggio);
+		byte[] message = messaggio.getBytes(Charset.forName("UTF-8"));
+		for (Participant p : mParticipants) {
+			if (!p.getParticipantId().equals(mMyId)) {
+				Games.RealTimeMultiplayer.sendUnreliableMessage(mGoogleApiClient, message,
+						mRoomId, p.getParticipantId());
+			}
+		}
+	}
 
 	//Overrides
 	
@@ -483,7 +497,7 @@ public class GodotGPS extends Godot.SingletonBase implements	  RoomUpdateListene
 		Log.d(TAG, "GooglePlayService: onInvitationReceived");
         mIncomingInvitationId = invitation.getInvitationId();
 		
-		GodotLib.calldeferred(instanceId, "_on_invitation_recieved", new Object[]{invitation.getInviter().getDisplayName()});
+		GodotLib.calldeferred(instanceId, "_on_invitation_recieved", new Object[]{invitation.getInviter().getDisplayName(), invitation.getInvitationId()});
     }
 
     @Override
@@ -491,7 +505,7 @@ public class GodotGPS extends Godot.SingletonBase implements	  RoomUpdateListene
 		Log.d(TAG, "GooglePlayService: onInvitationRemoved");
         if (mIncomingInvitationId.equals(invitationId)) {
             mIncomingInvitationId = null;
-            GodotLib.calldeferred(instanceId, "_on_invitation_emoved", new Object[]{});
+            GodotLib.calldeferred(instanceId, "_on_invitation_removed", new Object[]{});
         }
     }
 	
@@ -659,7 +673,21 @@ public class GodotGPS extends Godot.SingletonBase implements	  RoomUpdateListene
 	@Override
 	public void onRealTimeMessageReceived(RealTimeMessage message){
 		//Called to notify the client that a reliable or unreliable message was received for a room.
-		Log.d(TAG, "GooglePlayService: onRealTimeMessageReceived");
+		Log.d(TAG, "GooglePlayService: onRealTimeMessageReceived message:" + message.getMessageData());
+		String messaggio="";
+		
+		try{
+			messaggio = new String(message.getMessageData(), "UTF-8");	
+		}
+		catch (UnsupportedEncodingException e)
+		{
+			
+		}
+		
+		
+		Log.d(TAG, "GooglePlayService: onRealTimeMessageReceived messaggio:" + messaggio);
+		GodotLib.calldeferred(instanceId, "_on_received_message", new Object[]{messaggio});
+		
 	}
 
 	@Override
@@ -826,7 +854,9 @@ public class GodotGPS extends Godot.SingletonBase implements	  RoomUpdateListene
 	{
 		registerClass("GooglePlayService", new String[]
 		{
-			"init", "signin", "signout", "getStatus", /*"revoke",*/ "getProfileInfo", "lbSubmit", "lbShow", "acUnlock", "acIncrement", "acDisplay", "setInstanceID", "startQuickGame", "selectOpponents", "seeInvitations"
+			"init", "signin", "signout", "getStatus", /*"revoke",*/ "getProfileInfo", "lbSubmit", "lbShow", "acUnlock", "acIncrement"
+			, "acDisplay", "setInstanceID", "startQuickGame", "selectOpponents", "seeInvitations", "acceptInviteToRoom"
+			, "broadcastUnreliableMessage"
 		});
 		activity	= p_activity;
 	}
