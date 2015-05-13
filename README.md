@@ -88,13 +88,16 @@ The following methods are available:
   startQuickGame()
   
   void selectOpponents(int min, int max)
+  
+  void acceptInviteToRoom(int invitationId)
+  
+  void broadcastUnreliableMessage(String message)
 ```
 
 Callback Functions
 -------------
 ```
 _on_connected()
-    fired on google play services connected
 
 _on_selected_player_ui_cancelled()
 
@@ -106,9 +109,9 @@ _on_invitation_succeeded()
 
 _on_game_start()
 
-_on_invitation_recieved(invitedFrom)
+_on_invitation_recieved(invitedFrom, invitationId)
 
-_on_invitation_emoved()
+_on_invitation_removed()
 
 _on_connected_to_room(RoomId, Participants, MyId)
 
@@ -119,6 +122,8 @@ _on_disconnected_from_room(room)
 _on_updatePeerScoresDisplay()
 
 _on_leave_room(roomId)
+
+_on_received_message(message)
 
 ```
 License
