@@ -58,7 +58,7 @@ func initGPS():
 
 func _on_connected():
 	print("connected")            
-
+```
 
 API Reference
 -------------
