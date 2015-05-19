@@ -47,7 +47,7 @@ Export->Target->Android
 		Permissions on:
 			- Access Network State
 			- Internet
-```
+
 To refer to the callback functions use setInstanceID and then just write the callback function as in example below:
 ```
 func initGPS():
@@ -58,7 +58,7 @@ func initGPS():
 
 func _on_connected():
 	print("connected")            
-```
+
 
 API Reference
 -------------
